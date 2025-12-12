@@ -1,0 +1,37 @@
+{
+  "title": "Driver Activity Timeline",
+  "activities": [
+    {
+      "id": 1,
+      "title": "12 Invoices have been paid",
+      "description": "Invoices have been paid to the company",
+      "timestamp": "12 min ago",
+      "color": "red",
+      "icon": "●"
+    },
+    {
+      "id": 2,
+      "title": "Meeting with john",
+      "description": "Project meeting with john @10:15am",
+      "timestamp": "45 min ago",
+      "color": "blue",
+      "icon": "●"
+    },
+    {
+      "id": 3,
+      "title": "Create a new react project for client",
+      "description": "5 team members in a project",
+      "timestamp": "2 day ago",
+      "color": "orange",
+      "icon": "●"
+    },
+    {
+      "id": 4,
+      "title": "Create a new react project for client",
+      "description": "5 team members in a project",
+      "timestamp": "2 day ago",
+      "color": "orange",
+      "icon": "●"
+    }
+  ]
+}

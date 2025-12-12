@@ -1,0 +1,10 @@
+{
+  "title": "Last Location",
+  "address": "Jalan Anggrek IV No 3 Malaka sari, Jakarta Timur",
+  "lastUpdated": "Last Updated: 12/02/2023 12:23:00",
+  "coordinates": {
+    "lat": -6.2297,
+    "lng": 106.9172
+  },
+  "vehicleIcon": "🚗"
+}
