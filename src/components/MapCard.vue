@@ -4,16 +4,28 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import mapLocationData from '../store/data-json/map-location.json'
 import { useTheme } from '../composables/useTheme'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+
+interface datas {
+    latitude: number,
+    longitude: number,
+    timestamp: string
+}
 
 const mapContainer = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
 let tileLayer: L.TileLayer | null = null
+let markersLayer: L.LayerGroup | null = null
 
 const data = ref(mapLocationData)
+const dataLatTide = ref<datas[]>([]);
+
 const { theme } = useTheme()
 
 // Custom car icon HTML
-const createCarIcon = () => {
+const createCarIcon = (lat?:string, long?:string) => {
+
   return L.divIcon({
     html: `
     <div style="width: 28px; height: 60px; position: relative; transform: rotate(45deg); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));">
@@ -31,13 +43,26 @@ const createCarIcon = () => {
   })
 }
 
-onMounted(() => {
-  if (mapContainer.value) {
+const fetchData = async () => {
+  try {
+    const response = await axios.get('https://treffix-tracking-test.vercel.app/track')
+    dataLatTide.value = [response.data];
+    
+  } catch (error) {
+    ElMessage.error('Failed to fetch map location data.')
+    console.error('Error fetching map location data:', error)
+  }
+}
+
+onMounted(async () => {
+    if (mapContainer.value) {
+      map = L.map(mapContainer.value, {
+        zoomControl: true,
+        attributionControl: false
+      }).setView([data.value.coordinates.lat, data.value.coordinates.lng], 14)
+
+      
     // Initialize map
-    map = L.map(mapContainer.value, {
-      zoomControl: true,
-      attributionControl: false
-    }).setView([data.value.coordinates.lat, data.value.coordinates.lng], 14)
 
     // Add tile layer based on theme
     const tileUrl = theme.value === 'dark' 
@@ -48,13 +73,41 @@ onMounted(() => {
       maxZoom: 19,
     }).addTo(map)
 
-    // Add custom car marker
-    const carIcon = createCarIcon()
-    L.marker([data.value.coordinates.lat, data.value.coordinates.lng], {
-      icon: carIcon
-    }).addTo(map)
+    
+    render();
+    
   }
 })
+
+const render = async() => {
+    await fetchData();
+    setTimeout(() => {
+        if (!map) return;
+
+        // Remove existing markers layer if it exists
+        if (markersLayer) {
+            map.removeLayer(markersLayer)
+        }
+
+        // Create new layer group
+        markersLayer = L.layerGroup()
+    
+        const carIcon = createCarIcon();
+        if(dataLatTide.value.length > 0){
+            dataLatTide.value.forEach(item => {
+                L.marker([item.latitude, item.longitude], {
+                    icon: carIcon
+                }).addTo(markersLayer!)
+            })
+        }
+        map.addLayer(markersLayer)
+
+        render();
+    }, 3000);
+}
+ 
+
+
 
 // Watch theme changes and update map tiles
 watch(theme, (newTheme) => {
