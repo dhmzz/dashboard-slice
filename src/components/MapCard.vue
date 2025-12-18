@@ -24,7 +24,7 @@ const dataLatTide = ref<datas[]>([]);
 const { theme } = useTheme()
 
 // Custom car icon HTML
-const createCarIcon = (lat?:string, long?:string) => {
+const createCarIcon = () => {
 
   return L.divIcon({
     html: `
